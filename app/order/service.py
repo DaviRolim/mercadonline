@@ -3,16 +3,32 @@ from typing import List
 from .model import Order
 from .interface import OrderInterface
 from ..product.service import ProductService
+from sqlalchemy.orm.collections import prepare_instrumentation
 
 
 class OrderService():
     @staticmethod
     def get_all(userId: int) -> List[Order]:
-        return Order.query.filter(Order.user_id == userId).all()
+        orders = Order.query.filter(Order.user_id == userId).all()
+        orders_info = []
+        for order in orders:
+            new_order = {}
+            new_order['order_id'] = order.order_id
+            new_order['created_at'] = order.created_at
+            qtItem = 0
+            total = 0.0
+            for product in order.products:
+                qtItem += 1
+                total += product.price
+            new_order['qtItems'] = qtItem
+            new_order['total'] = total
+            orders_info.append(new_order)
+        print(orders_info)
+        return  orders_info
 
     @staticmethod
-    def get_by_id(order_id: int) -> Order:
-        return Order.query.get(order_id)
+    def get_by_id(user_id: int, order_id: int) -> Order:
+        return Order.query.filter(Order.user_id == user_id, Order.order_id == order_id).first()
 
     @staticmethod
     def update(order: Order, Order_change_updates: OrderInterface) -> Order:

@@ -19,7 +19,7 @@ class OrderResource(Resource):
     '''Orders'''
 
     @api.doc('list_orders')
-    @api.marshal_list_with(_order)
+    @api.marshal_list_with(order_base)
     def get(self, userId: int) -> List[Order]:
         '''Get all Orders'''
         return OrderService.get_all(userId)
@@ -32,15 +32,15 @@ class OrderResource(Resource):
         return OrderService.create(api.payload, userId)
 
 
-@api.route('/<int:orderId>')
+@api.route('/<int:userId>/<int:orderId>')
 @api.param('orderId', 'Order database ID')
 class OrderIdResource(Resource):
 
     @api.marshal_with(_order, code=201)
-    def get(self, orderId: int) -> Order:
+    def get(self, userId: int, orderId: int) -> Order:
         '''Get Single Order'''
 
-        return OrderService.get_by_id(orderId)
+        return OrderService.get_by_id(orderId, userId)
 
     def delete(self, orderId: int) -> Response:
         '''Delete Single Order'''
