@@ -7,8 +7,8 @@ from ..product.service import ProductService
 
 class OrderService():
     @staticmethod
-    def get_all() -> List[Order]:
-        return Order.query.all()
+    def get_all(userId: int) -> List[Order]:
+        return Order.query.filter(Order.user_id == userId).all()
 
     @staticmethod
     def get_by_id(order_id: int) -> Order:
@@ -30,12 +30,13 @@ class OrderService():
         return [order_id]
 
     @staticmethod
-    def create(new_attrs: OrderInterface) -> Order:
+    def create(new_attrs: OrderInterface, user_id: int) -> Order:
         print(new_attrs)
         #cria uma Order normal
         #depois faz um loop nos products e da um append em new_order.products.append(newProduct)
         new_order = Order(
-            order_id=new_attrs['orderId']
+            order_id=new_attrs['orderId'],
+            user_id=user_id
         )
         db.session.add(new_order)
         db.session.commit()

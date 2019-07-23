@@ -1,7 +1,8 @@
-from sqlalchemy import Integer, Column, String, Float, Table, ForeignKey
+from sqlalchemy import Integer, Column, String, Float, Table, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from app import db  # noqa
 from .interface import OrderInterface
+from datetime import datetime
 
 
 association_table = Table('association', db.Model.metadata,
@@ -15,6 +16,8 @@ class Order(db.Model):  # type: ignore
     __tablename__ = 'order'
 
     order_id = Column(Integer(), primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.user_id'))
+    created_at = Column(DateTime, default=datetime.now())
     products = relationship("Product", secondary=association_table)
 
     def update(self, changes: OrderInterface):

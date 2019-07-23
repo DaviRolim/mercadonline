@@ -12,23 +12,24 @@ from .schema import OrderDTO
 api = OrderDTO.api
 _order = OrderDTO.order
 order_base = OrderDTO.order_base
-@api.route('/')
+# @api.route('/')
+@api.route('/<int:userId>')
+@api.param('userId', 'Orders for specific user')
 class OrderResource(Resource):
     '''Orders'''
 
     @api.doc('list_orders')
     @api.marshal_list_with(_order)
-    def get(self) -> List[Order]:
+    def get(self, userId: int) -> List[Order]:
         '''Get all Orders'''
-
-        return OrderService.get_all()
+        return OrderService.get_all(userId)
 
     @api.doc('create_order')
     @api.expect(order_base)
     @api.marshal_with(_order, code=201)
-    def post(self) -> Order:
+    def post(self, userId: int) -> Order:
         '''Create a Single Order'''
-        return OrderService.create(api.payload)
+        return OrderService.create(api.payload, userId)
 
 
 @api.route('/<int:orderId>')

@@ -36,23 +36,30 @@ def seed_thing(cls):
         },
     ]
     db.session.bulk_insert_mappings(cls, things)
-# def seed_products():
-#     from app.product import Product
-#     products = [
-#         {
-#             'title': 'Pizza Slicer',
-#             'status': 'Cut delicious pizza',
-#         },
-#         {
-#             'title': 'Rolling Pin',
-#             'status': 'Roll delicious pizza',
-#         },
-#         {
-#             'title': 'Pizza Oven',
-#             'status': 'Bake delicious pizza',
-#         },
-#     ]
-#     db.session.bulk_insert_mappings(Product, products)
+
+def seed_user():
+    from app.user import User
+    users = [
+        {
+            'email': 'davirolim94@gmail.com',
+            'password': 'davi1234',
+        }
+    ]
+    db.session.bulk_insert_mappings(User, users)
+
+def seed_order():
+    from app.order import Order
+    orders = [
+        {
+            "order_id": 1,
+            "user_id" : 1
+        },
+        {
+            "order_id": 2,
+            "user_id" : 1
+        }
+    ]
+    db.session.bulk_insert_mappings(Order, orders)
 
 
 class SeedCommand(Command):
@@ -65,5 +72,7 @@ class SeedCommand(Command):
             db.drop_all()
             db.create_all()
             seed_things()
+            seed_user()
+            # seed_order()
             db.session.commit()
             print('DB successfully seeded.')
