@@ -3,6 +3,7 @@ from typing import List
 from .model import Order
 from .interface import OrderInterface
 from ..product.service import ProductService
+from ..user.service import UserService
 from sqlalchemy.orm.collections import prepare_instrumentation
 
 
@@ -23,7 +24,6 @@ class OrderService():
             new_order['qtItems'] = qtItem
             new_order['total'] = total
             orders_info.append(new_order)
-        print(orders_info)
         return  orders_info
 
     @staticmethod
@@ -47,22 +47,35 @@ class OrderService():
 
     @staticmethod
     def create(new_attrs: OrderInterface, user_id: int) -> Order:
-        print(new_attrs)
-        #cria uma Order normal
-        #depois faz um loop nos products e da um append em new_order.products.append(newProduct)
-        new_order = Order(
-            order_id=new_attrs['orderId'],
-            user_id=user_id
-        )
-        db.session.add(new_order)
-        db.session.commit()
+        from werkzeug.exceptions import BadRequest, ExpectationFailed
 
-        product_ids=new_attrs['products']
-        print(product_ids)
+        service = OrderService()
+        try:
+            service.validate_user(user_id)
+            new_order = Order(
+                user_id=user_id
+            )
+            db.session.add(new_order)
+            order = service.add_products_to_orders(new_order, new_attrs['products'])
+        except Exception as e:
+            raise ExpectationFailed(str(e))
+
+        db.session.commit()
+        return order
+
+    def add_products_to_orders(self, order: Order, product_ids: list) -> Order:
+        if len(product_ids) == 0:
+            raise Exception('Must have at least one product') 
+
         for id in product_ids:
             product = ProductService.get_by_id(id)
-            new_order.products.append(product)
+            if not product:
+                raise Exception(f'Product with id {id} doesn\'t exist') 
+            order.products.append(product) 
 
-        db.session.commit()
+    def validate_user(self, user_id: int):
+         user = UserService.get_by_id(user_id)
+         if not user:
+            raise Exception(f'User with id {user_id} doesn\'t exist') 
 
-        return new_order
+
