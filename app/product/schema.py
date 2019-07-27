@@ -10,5 +10,13 @@ class ProductDTO:
         'productImage': fields.String(attribute='product_image', description='URI of image hosted on some cloud service')
         }
      )
+    product_post = api.model('Product', {
+        'product_id': fields.Integer(attribute='productId', description='id'),
+        'name': fields.String(description='Name of the product'),
+        'price': fields.Float(description='Price of the product'),
+        'quantity_in_stock': fields.Integer(attribute='quantityInStock', description='Quantity in stock'),
+        'product_image': fields.String(attribute='productImage', description='URI of image hosted on some cloud service')
+        }
+     )
 
 

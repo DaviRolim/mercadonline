@@ -57,11 +57,11 @@ class OrderService():
             )
             db.session.add(new_order)
             order = service.add_products_to_orders(new_order, new_attrs['products'])
+            db.session.commit()
+            return order
         except Exception as e:
             raise ExpectationFailed(str(e))
 
-        db.session.commit()
-        return order
 
     def add_products_to_orders(self, order: Order, product_ids: list) -> Order:
         if len(product_ids) == 0:
@@ -73,6 +73,7 @@ class OrderService():
                 raise Exception(f'Product with id {id} doesn\'t exist') 
             order.products.append(product) 
 
+        return order
     def validate_user(self, user_id: int):
          user = UserService.get_by_id(user_id)
          if not user:

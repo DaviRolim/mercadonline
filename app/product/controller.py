@@ -20,6 +20,7 @@ class ProductResource(Resource):
     @api.marshal_list_with(_product)
     def get(self) -> List[Product]:
         '''Get all Products'''
+        print(type(_product))
 
         return ProductService.get_all()
 

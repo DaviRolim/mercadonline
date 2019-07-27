@@ -4,5 +4,6 @@ import datetime
 
 class OrderInterface(TypedDict, total=False):
     order_id: int
-    products: list
+    user_id: int
     created_at: datetime.time
+    # products: list
