@@ -6,7 +6,7 @@ bcrypt==3.1.7
 cffi==1.12.3
 Click==7.0
 create-flask-app==0.2.1
-Flask==0.12
+Flask==1.0
 Flask-Bcrypt==0.7.1
 Flask-Migrate==2.0.0
 Flask-RESTful==0.3.7
